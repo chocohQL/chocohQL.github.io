@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>markdown代码块伪IDEA配色</title>
+      <link href="/2024/02/03/markdown%E4%BB%A3%E7%A0%81%E5%9D%97%E4%BC%AAIDEA%E9%85%8D%E8%89%B2/"/>
+      <url>/2024/02/03/markdown%E4%BB%A3%E7%A0%81%E5%9D%97%E4%BC%AAIDEA%E9%85%8D%E8%89%B2/</url>
+      
+        <content type="html"><![CDATA[<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Block comment */</span></span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> AnInterface.CONSTANT;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.util.Date.parse;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> SomeClass.staticField;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Doc comment here for &lt;code&gt;SomeClass&lt;/code&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> T type parameter</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> Math#sin(double)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Annotation</span> (name=value)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SomeClass</span>&lt;T <span class="keyword">extends</span> <span class="title class_">Runnable</span>&gt; &#123; <span class="comment">// some comment</span></span><br><span class="line">  <span class="keyword">private</span> <span class="type">T</span> <span class="variable">field</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">double</span> <span class="variable">unusedField</span> <span class="operator">=</span> <span class="number">12345.67890</span>;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">UnknownType</span> <span class="variable">anotherString</span> <span class="operator">=</span> <span class="string">&quot;Another\nStrin\g&quot;</span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">staticField</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">instanceFinalField</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">protectedField</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">final</span> <span class="type">int</span> <span class="variable">packagePrivateField</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * 语义高亮显示:</span></span><br><span class="line"><span class="comment">   * 生成的光谱为局部变量和形参选择颜色:</span></span><br><span class="line"><span class="comment">   *  Color#1 SC1.1 SC1.2 SC1.3 SC1.4 Color#2 SC2.1 SC2.2 SC2.3 SC2.4 Color#3</span></span><br><span class="line"><span class="comment">   *  Color#3 SC3.1 SC3.2 SC3.3 SC3.4 Color#4 SC4.1 SC4.2 SC4.3 SC4.4 Color#5</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> param1</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> param2</span></span><br><span class="line"><span class="comment">   * <span class="doctag">@param</span> param3</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">public</span> <span class="title function_">SomeClass</span><span class="params">(AnInterface param1,</span></span><br><span class="line"><span class="params">                  <span class="type">int</span> param2,</span></span><br><span class="line"><span class="params">                  <span class="type">int</span> param3)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">reassignedValue</span> <span class="operator">=</span> <span class="built_in">this</span>.staticField + param2 + param3;</span><br><span class="line">    <span class="type">long</span> localVar1, localVar2, localVar3, localVar4;</span><br><span class="line">    <span class="type">int</span> <span class="variable">localVar</span> <span class="operator">=</span> <span class="string">&quot;IntelliJ&quot;</span>; <span class="comment">// Error, incompatible types</span></span><br><span class="line">    System.out.println(anotherString + toString() + localVar);</span><br><span class="line">    <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> protectedField + packagePrivateField + staticField;</span><br><span class="line">    <span class="type">long</span> <span class="variable">time</span> <span class="operator">=</span> parse(<span class="string">&quot;1.2.3&quot;</span>); <span class="comment">// Method is deprecated</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Thread</span>().countStackFrames(); <span class="comment">// Method is deprecated and marked for removal</span></span><br><span class="line">    reassignedValue ++; </span><br><span class="line">    field.run(); </span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">SomeClass</span>() &#123;</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> localVar;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="type">int</span>[] l = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;().toArray(<span class="keyword">new</span> <span class="title class_">int</span>[CONSTANT]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">AnEnum</span> &#123; CONST1, CONST2 &#125;</span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">AnInterface</span> &#123;</span><br><span class="line">  <span class="type">int</span> <span class="variable">CONSTANT</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">void</span> <span class="title function_">method</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">SomeAbstractClass</span> &#123;</span><br><span class="line">  <span class="keyword">protected</span> <span class="type">int</span> <span class="variable">instanceField</span> <span class="operator">=</span> staticField;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 文档 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> doc </tag>
+            
+            <tag> markdown </tag>
+            
+            <tag> java </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>【蓝色蜻蛉】示例文档.md</title>
       <link href="/2024/02/02/%E3%80%90%E8%93%9D%E8%89%B2%E8%9C%BB%E8%9B%89%E3%80%91%E7%A4%BA%E4%BE%8B%E6%96%87%E6%A1%A3/"/>
       <url>/2024/02/02/%E3%80%90%E8%93%9D%E8%89%B2%E8%9C%BB%E8%9B%89%E3%80%91%E7%A4%BA%E4%BE%8B%E6%96%87%E6%A1%A3/</url>
@@ -13,7 +42,7 @@
       
       <categories>
           
-          <category> 文档 </category>
+          <category> 博客 </category>
           
       </categories>
       
@@ -50,6 +79,8 @@
         <tags>
             
             <tag> Java </tag>
+            
+            <tag> doc </tag>
             
         </tags>
       

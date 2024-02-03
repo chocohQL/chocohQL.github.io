@@ -17,11 +17,18 @@
 
 /* 导航栏====================================================================================== */
 /* 导航栏菜单鼠标移入字体放大 */
-#nav #site-name:hover,
-#nav .menus_item:hover,
-#nav #search-button:hover{
-    font-size:28px;
-}
+/*#nav #site-name:hover,*/
+/*#nav .menus_item:hover,*/
+/*#nav #search-button:hover{*/
+/*    font-size:28px;*/
+/*}*/
+/* 导航栏居中 */
+/*#nav .menus_items {*/
+/*    position: absolute;*/
+/*    width: fit-content;*/
+/*    left: 50%;*/
+/*    transform: translateX(-50%);*/
+/*}*/
 
 /* 页脚====================================================================================== */
 /*#footer {*/
