@@ -1,0 +1,207 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>HashMap详解 | chocohQL</title><meta name="author" content="chocohQL"><meta name="copyright" content="chocohQL"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="HashMap概述简介Java为数据结构的映射定义了一个接口java.util.Map，其中有四个常用实现类：HashMap、HashTable、LinkedHashMap和TreeMap。  HashMap：根据键的hashCode值存储数据，允许一条记录的键为null，访问速度快，遍历顺序不稳定。HashMap线程不安全，并发环境可以使用Collections的syncronizedMap方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HashMap详解">
+<meta property="og:url" content="https://chocohql.github.io/2024/02/22/2-HashMap/index.html">
+<meta property="og:site_name" content="chocohQL">
+<meta property="og:description" content="HashMap概述简介Java为数据结构的映射定义了一个接口java.util.Map，其中有四个常用实现类：HashMap、HashTable、LinkedHashMap和TreeMap。  HashMap：根据键的hashCode值存储数据，允许一条记录的键为null，访问速度快，遍历顺序不稳定。HashMap线程不安全，并发环境可以使用Collections的syncronizedMap方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://chocohql.github.io/2024/02/22/2-HashMap/cover.jpg">
+<meta property="article:published_time" content="2024-02-22T11:44:12.000Z">
+<meta property="article:modified_time" content="2024-02-22T11:51:08.827Z">
+<meta property="article:author" content="chocohQL">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="源码解析">
+<meta property="article:tag" content="HashMap">
+<meta property="article:tag" content="Map">
+<meta property="article:tag" content="原理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://chocohql.github.io/2024/02/22/2-HashMap/cover.jpg"><link rel="shortcut icon" href="/img/logo.png"><link rel="canonical" href="https://chocohql.github.io/2024/02/22/2-HashMap/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.12.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.32/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'HashMap详解',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-22 19:51:08'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/style.css"/><script src="/js/index.js"></script><meta name="generator" content="Hexo 7.1.1"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/404avatar.jpg'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/2024/02/22/2-HashMap/cover.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="chocohQL"><img class="site-icon" src="/img/logo.png"/><span class="site-name">chocohQL</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">HashMap详解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-02-22T11:44:12.000Z" title="发表于 2024-02-22 19:44:12">2024-02-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-02-22T11:51:08.827Z" title="更新于 2024-02-22 19:51:08">2024-02-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E7%AC%94%E8%AE%B0/">笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="HashMap详解"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><section class="main-hero-waves-area waves-area"><svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto"><defs><path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path></defs><g class="parallax"><use href="#gentle-wave" x="48" y="0"></use><use href="#gentle-wave" x="48" y="3"></use><use href="#gentle-wave" x="48" y="5"></use><use href="#gentle-wave" x="48" y="7"></use></g></svg></section></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="HashMap概述"><a href="#HashMap概述" class="headerlink" title="HashMap概述"></a>HashMap概述</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>Java为数据结构的映射定义了一个接口<code>java.util.Map</code>，其中有四个常用实现类：HashMap、HashTable、LinkedHashMap和TreeMap。</p>
+<p><img src="/2024/02/22/2-HashMap/Map.svg" alt="Map"></p>
+<p><strong>HashMap</strong>：根据键的<code>hashCode</code>值存储数据，允许一条记录的键为null，访问速度快，遍历顺序不稳定。HashMap线程不安全，并发环境可以使用Collections的syncronizedMap方法将它包装为线程安全的Map但是更推荐使用ConcurrentHashMap。<code>JDK8</code>以前HashMap使用数组＋链表的数据结构，而<code>JDK8</code>之后引入了红黑树结构，查找时间复杂度为O(logn)，当链表长度大于8并且数组长度大于64时会将链表转为红黑树。</p>
+<p><strong>LinkedHashMap</strong>：LinkedHashMap是HashMap的一个子类，通过加入双向链表保证了遍历的有序性。</p>
+<p><strong>Hashtable</strong>：Hashtable功xd能与HashMap类似，不同点是它继承<code>Dictionary</code>类，因此键值都不允许null，它直接对方法添加<code>synchronized</code>，是线程安全的。</p>
+<p><strong>TreeMap</strong>：TreeMap实现<code>SortedMap</code>接口，默认是按键值的升序排序，也可以指定排序的比较器，如果使用排序的映射，建议使用TreeMap。在使用TreeMap时，它的key不能为null，key必须实现<code>Comparable</code>接口或者在构造TreeMap传入自定义的Comparator，否则会在运行时抛出<code>java.lang.ClassCastException</code>类型的异常。</p>
+<h2 id="哈希值"><a href="#哈希值" class="headerlink" title="哈希值"></a>哈希值</h2><p><strong>哈希值（hashCode）</strong>：为了支持哈希表而定义在Object中通过<code>hashCode</code>方法获取的对象散列码，它是一个int类型的整数，默认情况下使用对象的存储地址。</p>
+<p>在HashMap中，存储键值对的数组地址就是通过对hashCode进行哈希算法获得的，而当数组的这个地址上有元素时会调用key的<code>equals</code>方法判断键是否重复，如果键储存引用数据类型，需要同时重写<code>hashCode</code>和<code>equals</code>方法，以维护为了维护<code>equals</code>方法的一般约定：<code>equals</code>判断相等的对象<code>hashCode</code>也必须相等。</p>
+<h2 id="哈希冲突"><a href="#哈希冲突" class="headerlink" title="哈希冲突"></a>哈希冲突</h2><p>当对两个不同存储元素进行哈希运算得到地址相同时，就发生了<strong>哈希冲突（哈希碰撞）</strong>，解决哈希冲突的方案有很多：开放寻址法、连地址法、再散列函数法等，而HashMap采用了链地址法来解决哈希冲突。</p>
+<h1 id="HashMap详解"><a href="#HashMap详解" class="headerlink" title="HashMap详解"></a>HashMap详解</h1><h2 id="存储结构"><a href="#存储结构" class="headerlink" title="存储结构"></a>存储结构</h2><p>HashMap存储结构基于数组＋链表+红黑树（JDK8新增）实现。</p>
+<p>HashMap中的哈希桶数组采用<code>Node</code>数组。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">transient</span> Node&lt;K,V&gt;[] table;</span><br></pre></td></tr></table></figure>
+
+<p><code>Node</code>类型实现类<code>Map.Entry</code>接口，定义为一个映射（键值对）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Node</span>&lt;K,V&gt; <span class="keyword">implements</span> <span class="title class_">Map</span>.Entry&lt;K,V&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> hash;</span><br><span class="line">    <span class="keyword">final</span> K key;</span><br><span class="line">    V value;</span><br><span class="line">    Node&lt;K,V&gt; next;</span><br><span class="line"></span><br><span class="line">    Node(<span class="type">int</span> hash, K key, V value, Node&lt;K,V&gt; next) &#123; ... &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> K <span class="title function_">getKey</span><span class="params">()</span>        &#123; ... &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> V <span class="title function_">getValue</span><span class="params">()</span>      &#123; ... &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> String <span class="title function_">toString</span><span class="params">()</span> &#123; ... &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="type">int</span> <span class="title function_">hashCode</span><span class="params">()</span> &#123; ... &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> V <span class="title function_">setValue</span><span class="params">(V newValue)</span> &#123; ... &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object o)</span> &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于扩容后的红黑树结构，则是使用TreeNode结构</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">TreeNode</span>&lt;K,V&gt; <span class="keyword">extends</span> <span class="title class_">LinkedHashMap</span>.Entry&lt;K,V&gt; &#123;</span><br><span class="line">    TreeNode&lt;K,V&gt; parent;  <span class="comment">// red-black tree links</span></span><br><span class="line">    TreeNode&lt;K,V&gt; left;</span><br><span class="line">    TreeNode&lt;K,V&gt; right;</span><br><span class="line">    TreeNode&lt;K,V&gt; prev;    <span class="comment">// needed to unlink next upon deletion</span></span><br><span class="line">    <span class="type">boolean</span> red;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于链表的查找时间复杂度为<code>O(n)</code>，而红黑树结构的查找时间复杂度为<code>O(logn)</code>，当数据量较大时优于链表，因此引入了红黑树结构。</p>
+<p>将链表长度阈值设置为8有几个原因：一是当链表长度达到8时，由于链表的平均查找长度位<code>n/2</code>等于4，此时红黑树平均查找长度为log2(8)等于3，之后红黑树查找效率才会开始显著高于链表；二是键值对分布满足泊松分布，大部分情况下在数组中分散较为均匀，当链表长度还未达到8时就已经扩容，HashMap维护的几乎都是链表，只有性能已经很差时才会达到树化阈值8。</p>
+<h2 id="成员属性"><a href="#成员属性" class="headerlink" title="成员属性"></a>成员属性</h2><p>HashMap定义了几个重要的成员属性。</p>
+<p>数组的默认初始容量为16，且扩容后必须为2的幂（合数）。常规设计是把桶的大小规定为素数，因为素数导致的冲突概率小于合数，因此Hashtable初始桶容量为11，而HashMap采用合数是为了在取模和扩容时做优化，同时为了减少冲突，HashMap定位哈希桶索引位置时，也加入了高位参与运算的过程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">DEFAULT_INITIAL_CAPACITY</span> <span class="operator">=</span> <span class="number">1</span> &lt;&lt; <span class="number">4</span>; <span class="comment">// aka 16</span></span><br></pre></td></tr></table></figure>
+
+<p>荷载系数（加载因子），默认为0.75，当键值对数量size大于数组容量乘以荷载系数时数组会进行扩容。默认值定义为0.75是在时间和空间成本之间提供了良好的权衡。较高的值会减少空间开销，但会增加查找成本。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">float</span> <span class="variable">DEFAULT_LOAD_FACTOR</span> <span class="operator">=</span> <span class="number">0.75f</span>;</span><br></pre></td></tr></table></figure>
+
+<p>链表的阈值长度默认为8，数组树化最小长度为64，即当数组长度大于64且链表长度大于8时链表结构转为红黑树结构，而取消树化的默认阈值为6。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">TREEIFY_THRESHOLD</span> <span class="operator">=</span> <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">UNTREEIFY_THRESHOLD</span> <span class="operator">=</span> <span class="number">6</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MIN_TREEIFY_CAPACITY</span> <span class="operator">=</span> <span class="number">64</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h2><p>计算哈希值是操作键值对的第一步，最终的哈希值是取hashCode的高位参与运算。值为null的键无法获取hashCode，因此直接返回0值，这也决定了HashMap只能存储一个值为null的键，而value不参与计算因此可以存在多个记录为null。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="title function_">hash</span><span class="params">(Object key)</span> &#123;</span><br><span class="line">    <span class="type">int</span> h;</span><br><span class="line">    <span class="keyword">return</span> (key == <span class="literal">null</span>) ? <span class="number">0</span> : (h = key.hashCode()) ^ (h &gt;&gt;&gt; <span class="number">16</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而键对应的最终数组下标并非hash值，通常是将hash值对数组长度取模运算，这样得到的数组下标的分布较为均匀，但取模消耗较大，因此HashMap通过效率更高的<code>(n - 1) &amp; hash</code>运算得到保存位。由于数组长度总是2的幂，这种运算等价于对n取模，也就是hash%n。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tab[i = (n - <span class="number">1</span>) &amp; hash]</span><br></pre></td></tr></table></figure>
+
+<p><code>JDK8</code>中优化了高位运算算法，是通过hashCode的高16位异或低16位实现的，这么做可以在数组table的length比较小的时候，也能保证考虑到高低Bit都参与到Hash的计算中，同时不会有太大的开销。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> h = key.hashCode() : 1111 1111 1111 1111 1111 0000 1110 1010</span><br><span class="line">		   h &gt;&gt;&gt; 16 : 0000 0000 0000 0000 1111 1111 1111 1111</span><br><span class="line">hash = h ^ h &gt;&gt;&gt; 16	: 1111 1111 1111 1111 0000 1111 0001 0101</span><br><span class="line"></span><br><span class="line">	 (n - 1) &amp; hash : 0000 0000 0000 0000 0000 0000 0000 1111</span><br><span class="line">					  1111 1111 1111 1111 0000 1111 0001 0101 </span><br><span class="line">				  i : 0101 = 5</span><br></pre></td></tr></table></figure>
+
+<h2 id="put方法"><a href="#put方法" class="headerlink" title="put方法"></a>put方法</h2><p>HashMap调用无参构造时并不会创建Node数组，只有在第一次调用put方法时才会创建长度为16的数组，这个过程在数组扩容方法<code>resize</code>中完成。</p>
+<p>HashMap调用put方法的大概流程为：</p>
+<ol>
+<li>判断数组<code>table</code>是否为空或为null，是则调用<code>resize</code>方法扩容，初始容量为16。</li>
+<li>根据key的<code>hash</code>值计算数组下标<code>i</code>，如果<code>table[i]</code>为空则直接添加，如果不为空但调用首元素key值的<code>equals</code>方法判断键相同则覆盖并返回旧值，覆盖操作不会创建新的<code>Node</code>结点。</li>
+<li>判断<code>table[i]</code>结点是否为<code>TreeNode</code>类型，如果是则安装红黑树规则添加元素。</li>
+<li>若非红黑树则按照链表规则遍历，遍历过程中如果key存在则覆盖元素，否则插入链表尾部。此时如果链表长度大于<code>8</code>则调用<code>treeifyBin</code>方法将链表转为红黑树（方法内会判断键值对数量是否达到<code>64</code>，是则树化否则仅扩容）。</li>
+<li>插入后判断键值对数量<code>size</code>是否大于<code>threshold</code>（数组容量乘以荷载系数），是则调用<code>resize</code>方法扩容。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> V <span class="title function_">putVal</span><span class="params">(<span class="type">int</span> hash, K key, V value, <span class="type">boolean</span> onlyIfAbsent,</span></span><br><span class="line"><span class="params">               <span class="type">boolean</span> evict)</span> &#123;</span><br><span class="line">    Node&lt;K,V&gt;[] tab; Node&lt;K,V&gt; p; <span class="type">int</span> n, i;</span><br><span class="line">    <span class="comment">// 数组为空则初始化</span></span><br><span class="line">    <span class="keyword">if</span> ((tab = table) == <span class="literal">null</span> || (n = tab.length) == <span class="number">0</span>)</span><br><span class="line">        n = (tab = resize()).length;</span><br><span class="line">    <span class="comment">// table[i]为空直接添加</span></span><br><span class="line">    <span class="keyword">if</span> ((p = tab[i = (n - <span class="number">1</span>) &amp; hash]) == <span class="literal">null</span>)</span><br><span class="line">        tab[i] = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        Node&lt;K,V&gt; e; K k;</span><br><span class="line">        <span class="comment">// 首元素key值相同直接覆盖</span></span><br><span class="line">        <span class="keyword">if</span> (p.hash == hash &amp;&amp;</span><br><span class="line">            ((k = p.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">            e = p;</span><br><span class="line">        <span class="comment">// 判断是否为红黑树，按照红黑树添加</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (p <span class="keyword">instanceof</span> TreeNode)</span><br><span class="line">            e = ((TreeNode&lt;K,V&gt;)p).putTreeVal(<span class="built_in">this</span>, tab, hash, key, value);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 遍历链表</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">binCount</span> <span class="operator">=</span> <span class="number">0</span>; ; ++binCount) &#123;</span><br><span class="line">                <span class="comment">// 插入成功后判断是否转为红黑树</span></span><br><span class="line">                <span class="keyword">if</span> ((e = p.next) == <span class="literal">null</span>) &#123;</span><br><span class="line">                    p.next = newNode(hash, key, value, <span class="literal">null</span>);</span><br><span class="line">                    <span class="keyword">if</span> (binCount &gt;= TREEIFY_THRESHOLD - <span class="number">1</span>) <span class="comment">// -1 for 1st</span></span><br><span class="line">                        treeifyBin(tab, hash);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// key值相同则覆盖</span></span><br><span class="line">                <span class="keyword">if</span> (e.hash == hash &amp;&amp;</span><br><span class="line">                    ((k = e.key) == key || (key != <span class="literal">null</span> &amp;&amp; key.equals(k))))</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                p = e;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 覆盖并返回旧值，不会创建新的Node结点</span></span><br><span class="line">        <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123; <span class="comment">// existing mapping for key</span></span><br><span class="line">            <span class="type">V</span> <span class="variable">oldValue</span> <span class="operator">=</span> e.value;</span><br><span class="line">            <span class="keyword">if</span> (!onlyIfAbsent || oldValue == <span class="literal">null</span>)</span><br><span class="line">                e.value = value;</span><br><span class="line">            afterNodeAccess(e);</span><br><span class="line">            <span class="keyword">return</span> oldValue;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 判断是否扩容</span></span><br><span class="line">    ++modCount;</span><br><span class="line">    <span class="keyword">if</span> (++size &gt; threshold)</span><br><span class="line">        resize();</span><br><span class="line">    afterNodeInsertion(evict);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="扩容机制"><a href="#扩容机制" class="headerlink" title="扩容机制"></a>扩容机制</h2><p>在<code>JDK7</code>中，会先引用扩容前的Entry数组，若数组大小已达到最大则不会再扩容，之后会创建一个新的Entry数组获取旧Entry的所有元素，释放旧Entry数组对象引用并重新计算每个元素在数组的位置，新的链表采用头插法创建链表。</p>
+<p>而<code>JDK8</code>做了优化，由于使用2次幂扩容，重新计算hash值后只会修改高位bit，元素的位置要么在原位置上，要么移动2次幂的位置，因此不需要重新计算hash，只需要判断新增位bit的值，如果为0则索引不变，如果为1则新索引等于原索引+<code>oldCap</code>，重新得到的链表也不会倒置。</p>
+<p>哈希运算后同一数组位置的key被分散到了原位置和原索引+oldCap位置上：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">oldCap : .... 0000 1111</span><br><span class="line"> hash1 : .... 0000 0101 -&gt; .... 0000 0101 -&gt; 00101 = 5</span><br><span class="line"> hash2 : .... 1111 0101 -&gt; .... 0000 0101 -&gt; 00101 = 5</span><br><span class="line">   </span><br><span class="line">newCap : .... 0001 1111</span><br><span class="line"> hash1 : .... 0000 0101 -&gt; .... 0000 0101 -&gt; 00101 = 5</span><br><span class="line"> hash2 : .... 1111 0101 -&gt; .... 0001 0101 -&gt; 10101 = 5 + 16</span><br></pre></td></tr></table></figure>
+
+<p>尽管如此，扩容仍极为消耗性能，因此使用HashMap时尽可能估算Map的大小，初始化一个大概的数值，避免频繁扩容。</p>
+<h2 id="多线程死循环"><a href="#多线程死循环" class="headerlink" title="多线程死循环"></a>多线程死循环</h2><p>HashMap是线程不安全的，并发环境下会发生多种错误，严重时会导致链表循环引用进而导致死循环。</p>
+<p>在<code>JDK7</code>中一个典型的例子是：当两个线程添加完元素同时执行到resize方法时，第一个线程在原数组中遍历链表的过程中，第二个线先完成了rehash链表重组，使得链表倒置，此时线程一结点便指向之前的结点导致了循环链表。</p>
+<h2 id="遍历方式"><a href="#遍历方式" class="headerlink" title="遍历方式"></a>遍历方式</h2><p>HashMap有多种常用的遍历方式：遍历<code>keySet</code>集合、遍历<code>entrySet</code>集合、<code>Lambda</code>表达式直接遍历Map、获取<code>entrySet</code>的<code>iterator</code>迭代器进行遍历等，其中更推荐使用迭代器，效率较高，且能够直接调用迭代器的<code>remove</code>方法移除当前键值对。</p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://tech.meituan.com/2016/06/24/java-hashmap.html">https://tech.meituan.com/2016/06/24/java-hashmap.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43883685/article/details/109809049?ops_request_misc=%7B%22request_id%22:%22170860138616800215044645%22,%22scm%22:%2220140713.130102334..%22%7D&request_id=170860138616800215044645&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduend~default-1-109809049-null-null.142%5Ev99%5Econtrol&utm_term=hashmap%E6%B3%8A%E6%9D%BE%E5%88%86%E5%B8%83&spm=1018.2226.3001.4187"><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1830825">HashMap底层实现原理-腾讯云开发者社区-腾讯云 (tencent.com)</a></a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://chocohQL.github.io">chocohQL</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://chocohql.github.io/2024/02/22/2-HashMap/">https://chocohql.github.io/2024/02/22/2-HashMap/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://chocohQL.github.io" target="_blank">chocohQL</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java/">Java</a><a class="post-meta__tags" href="/tags/%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/">源码解析</a><a class="post-meta__tags" href="/tags/HashMap/">HashMap</a><a class="post-meta__tags" href="/tags/Map/">Map</a><a class="post-meta__tags" href="/tags/%E5%8E%9F%E7%90%86/">原理</a></div><div class="post_share"></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2024/02/05/1-CompletableFuture/" title="【CompletableFuture详解】换一种理解角度 - 被忽略的函数式接口"><img class="cover" src="/2024/02/05/1-CompletableFuture/cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">【CompletableFuture详解】换一种理解角度 - 被忽略的函数式接口</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/02/05/1-CompletableFuture/" title="【CompletableFuture详解】换一种理解角度 - 被忽略的函数式接口"><img class="cover" src="/2024/02/05/1-CompletableFuture/cover.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-02-05</div><div class="title">【CompletableFuture详解】换一种理解角度 - 被忽略的函数式接口</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/404avatar.jpg'" alt="avatar"/></div><div class="author-info__name">chocohQL</div><div class="author-info__description">失手扑空蓝色的蜻蛉</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/chocohQL"><i class="fab fa-github"></i><span>Hi,Friend</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/chocohQL" target="_blank" title="Github"><i class="fa-brands fa-github-alt" style="color: #B197FC;"></i></a><a class="social-icon" href="https://space.bilibili.com/252531700" target="_blank" title="bilibili"><i class="fa-brands fa-bilibili" style="color: #ff6897;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content"><span><p>故人依稀天边去，十年孤襟迎秋风。</p><p>江湖每逢一夜雨，为谁鞍前系灯笼。</p><p>青山远去万里遥，苏澜城外雨潇潇。</p><p>孤舟一叶问船家，何日重到苏澜桥。</p></span></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HashMap%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">HashMap概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E5%80%BC"><span class="toc-number">1.2.</span> <span class="toc-text">哈希值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E5%86%B2%E7%AA%81"><span class="toc-number">1.3.</span> <span class="toc-text">哈希冲突</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HashMap%E8%AF%A6%E8%A7%A3"><span class="toc-number">2.</span> <span class="toc-text">HashMap详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84"><span class="toc-number">2.1.</span> <span class="toc-text">存储结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%88%90%E5%91%98%E5%B1%9E%E6%80%A7"><span class="toc-number">2.2.</span> <span class="toc-text">成员属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95"><span class="toc-number">2.3.</span> <span class="toc-text">哈希算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#put%E6%96%B9%E6%B3%95"><span class="toc-number">2.4.</span> <span class="toc-text">put方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A9%E5%AE%B9%E6%9C%BA%E5%88%B6"><span class="toc-number">2.5.</span> <span class="toc-text">扩容机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%AD%BB%E5%BE%AA%E7%8E%AF"><span class="toc-number">2.6.</span> <span class="toc-text">多线程死循环</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%8D%E5%8E%86%E6%96%B9%E5%BC%8F"><span class="toc-number">2.7.</span> <span class="toc-text">遍历方式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">3.</span> <span class="toc-text">参考文献</span></a></li></ol></div></div></div></div></main><footer id="footer" style="background-image: url('/img/footer.png')"><div id="footer-wrap"><div class="copyright">&copy;2024 By chocohQL</div><div class="framework-info"><!--span= _p('footer.framework') + ' '--><!--a(href='https://hexo.io')= 'Hexo'--><!--span.footer-separator |--><!--span= _p('footer.theme') + ' '--><!--a(href='https://github.com/jerryc127/hexo-theme-butterfly')= 'Butterfly'--></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.12.0"></script><script src="/js/main.js?v=4.12.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.32/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><canvas class="fireworks" mobile="true"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/click-show-text.min.js" data-mobile="true" data-text="完结撒花,塔塔开,优雅,破防了,爷青回,前方高能,2333,啊？,禁止套娃,双厨狂喜,献出心脏,一键三连,nb,还有高手,开幕雷击,类目了,好活,好好好,666,bilibili干杯,回忆杀" data-fontsize="20px" data-random="true" async="async"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.12.0"></script></div></div></body></html>
