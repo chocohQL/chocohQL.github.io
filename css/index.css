@@ -3357,8 +3357,7 @@ h1.page-title + .tag-cloud-list {
 #page-header #site-title {
   margin: 0;
   color: var(--white);
-  font-size: 3.7em;
-  text-shadow: 3px 3px 0 #ff6897;
+  font-size: 3.2em;
 }
 @media screen and (min-width: 768px) {
   #page-header #site-title {
